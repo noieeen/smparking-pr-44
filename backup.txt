@@ -1,0 +1,32 @@
+arraySlot() {
+      console.log('arraySlot')
+      return zone => {
+        this.isShow = false;
+        console.log(zone);
+        let arrayzone = [];
+        let arrayChunked = [];
+        db.collection("floors")
+          .doc(this.$store.state.floor.toString())
+          .collection("zoneDetail")
+          .doc(zone[".key"])
+          .collection("slotDetail")
+          .get()
+          .then(data => {
+            data.forEach(doc => {
+              console.log('id >',doc.id);
+              arrayzone.push(doc.id);
+              if (arrayzone.length == 2) {
+                arrayChunked.push(arrayzone);
+                arrayzone = [];
+              }
+            });
+            this.isShow = true;
+            console.log('a',arrayChunked);
+            this.evenSlot = arrayChunked;
+            console.log('even',this.evenSlot)
+            this.zoneSlot.push(this.evenSlot)
+            console.log('zoneSlot',this.zoneSlot)
+            return arrayChunked;
+          });
+      };
+    },
