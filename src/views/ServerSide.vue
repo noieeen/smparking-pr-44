@@ -153,7 +153,7 @@
         </div>
       </div>
     </div>
-      <login></login>
+    <login></login>
   </div>
 </template>
 <script>
@@ -167,7 +167,7 @@ let bestFromRdbRef = rdb.ref("/bestSlot");
 export default {
   components: {
     EllipsisLoader,
-   Login ,
+    Login
   },
   data() {
     return {
@@ -303,45 +303,58 @@ export default {
                   /**found best slot */
                   let foundBest = false;
                   let disAll = [];
-                  for (let [key, value] of Object.entries(this.bestStatus)) {
-                    let keyZone =
-                      key
-                        .toString()
-                        .split(/\d|\-/)[1]
-                        .charCodeAt(0) - 65;
-                    let keySlot = Number(key.split("-")[1]);
-                    let keyPosiX =
-                      Math.floor(keyZone / 4) * 6 +
-                      Math.floor((keySlot - 1) / 2);
-                    //console.log('inloop',key,value);
-                    let keyPosiY = ((keySlot - 1) % 2) + (keyZone % 4) * 2;
-                    dis = Math.sqrt(
-                      Math.pow(Math.abs(keyPosiX - postiX), 2) +
-                        Math.pow(Math.abs(keyPosiY - positY), 2)
-                    );
-                    // console.log(key, "->[", keyPosiX, ",", keyPosiY, "]");
-                    disAll.push(dis);
-                    // console.log(dis);
-                    //console.log('disAll',...disAll);
-                    // console.log(key);
+                  let min = 0;
+                  if (this.bestStatus != null) {
+                    for (let [key, value] of Object.entries(this.bestStatus)) {
+                      let keyZone =
+                        key
+                          .toString()
+                          .split(/\d|\-/)[1]
+                          .charCodeAt(0) - 65;
+                      let keySlot = Number(key.split("-")[1]);
+                      let keyPosiX =
+                        Math.floor(keyZone / 4) * 6 +
+                        Math.floor((keySlot - 1) / 2);
+                      //console.log('inloop',key,value);
+                      let keyPosiY = ((keySlot - 1) % 2) + (keyZone % 4) * 2;
+                      dis = Math.sqrt(
+                        Math.pow(Math.abs(keyPosiX - postiX), 2) +
+                          Math.pow(Math.abs(keyPosiY - positY), 2)
+                      );
+                      // console.log(key, "->[", keyPosiX, ",", keyPosiY, "]");
+                      disAll.push(dis);
+                      min = Math.min(...disAll);
+                      // console.log(dis);
+                      //console.log('disAll',...disAll);
+                      // console.log(key);
+                    }
+                  } else {
+                    min = 0;
                   }
-                  let min = Math.min(...disAll);
+
                   //console.log("minnnnn", Math.min(...disAll));
                   // console.log(this.bestStatus)
                   this.allSlot.set(doc.id, min);
                   /** */
                   let status = "empty";
-                  /**found busy status */
-                  foundStatus = Object.keys(this.slotStatus).find(
-                    slot => slot == doc.id //&& Object.values(this.slotStatus) === true
-                  );
-                   /**set sensor RDB */
-                  if (!foundStatus) {
+                  if (this.slotStatus != null) {
+                    foundStatus = Object.keys(this.slotStatus).find(
+                      slot => slot == doc.id //&& Object.values(this.slotStatus) === true
+                    );
+                    /**set sensor RDB */
+                    if (!foundStatus) {
+                      let j = rdb
+                        .ref("sensor/" + doc.id)
+                        .set({ status: true, value: min });
+                      //console.log(doc.id + " is new ceate");
+                    }
+                  } else {
                     let j = rdb
                       .ref("sensor/" + doc.id)
                       .set({ status: true, value: min });
-                    console.log(doc.id + " is new ceate");
                   }
+                  /**found busy status */
+
                   // let getStatsRdb = Object.keys(this.slotStatus).filter(
                   //   slot => this.slotStatus[doc.id].status == false
                   // )//.map(slot => this.slotStatus[doc.id]);
@@ -354,7 +367,7 @@ export default {
                   // if (foundStatus) {
                   //   status = "busy";
                   // }
-                  
+
                   /**Check to Set color */
                   if (Object.values(this.slotStatus[doc.id])[0] == false) {
                     status = "busy";
@@ -388,8 +401,6 @@ export default {
                   */
 
                   arrayzone.push([doc.id, min, status]);
-
-          
 
                   //arrayzone.push([doc.id,doc.data().status,doc.data().bestSlot,busy])
                   /** */
@@ -461,7 +472,6 @@ export default {
       /**Refresh page */
       this.$router.go(0);
     },
-   
 
     infoSpot(i) {
       console.log(i[".key"], Object.values(i));
