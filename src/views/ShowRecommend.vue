@@ -13,13 +13,13 @@
         <EllipsisLoader :color="'#aebfbe'" />
       </div>
       <div>
-        <p class="display-1" style="color:black">{{recommendSlot[0]}}</p>
+        <p class="display-1" style="color:black">{{recommendSlot}}</p>
       </div>
-<button class="btn btn-primary" @click="forceRe" >
-  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-  Refresh...
-</button>
-      <button class="btn btn-warning m-3" @click="getTicket(recommendSlot[0])">Get Ticket</button>
+      <button class="btn btn-primary" @click="forceRe">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Refresh...
+      </button>
+      <button class="btn btn-warning m-3" @click="getTicket(recommendSlot)">Get Ticket</button>
       <!-- <p class="mt-4">Busy Slot</p>
       <ul class="list-unstyled">
         <li class="pointer" v-for="(i,key) in assignVal" :key="key">
@@ -70,11 +70,13 @@ export default {
     });
     this.recommendSlot;
     sensorRef.on("child_changed", snapshot => {
-      console.log('sensorRef',snapshot.val()) 
+      console.log("sensorRef", snapshot.val());
     });
   },
   computed: {
     recommendSlot() {
+      let min = 1;
+      let findLower
       if (this.refreshAssign == false) {
         let fb = this.slotStatus;
         for (let i in fb) {
@@ -90,14 +92,33 @@ export default {
         this.nowAssign = this.assignVal.keys().next().value;
         //console.log("this.nowAssign", this.nowAssign);
         let arr = Array.from(this.assignVal);
-        let find = arr.find(x => x[0]);
-        console.log("assignVal", find);
+        let yyy=[]
+       for(let i=0;i<arr.length;i++){
+         findLower = (arr[i][0]).slice(0,1);
+        //  if(findLower !=min){
+        //    min++
+        //  }
+        //  if(findLower == min){
+        //    console.log('=F',arr[i][0])
+        //  }
+        // let b = (a[i][0]).slice(0,1)
+        // let a = arr.filter(a=>a)
+        // console.log(a)
+        yyy.push(arr[i][0])
+        yyy.sort((a,b)=>a.slice(0,1)-b.slice(0,1))
+         
+       }         
+         console.log('yyy',yyy)
+         let newfound = yyy.find(x =>x[0])
+         console.log('newfound',newfound)
+        // let find = arr.find(x => x[0]);
+        // console.log("assignVal", find);
         // if (this.assignVal.keys().next().value != null) {
         this.isShow = true;
         // }
         console.log("isShow", this.isShow);
 
-        return find; //this.nowAssign//this.assignVal.keys().next().value;
+        return newfound; //this.nowAssign//this.assignVal.keys().next().value;
       }
       this.refreshAssign = true;
     }
@@ -127,10 +148,10 @@ export default {
         this.recommendSlot;
       });
     },
-    forceRe(){
+    forceRe() {
       /**Refresh page */
       this.$router.go(0);
-    },
+    }
   },
   watch: {
     re() {
