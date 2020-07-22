@@ -60,9 +60,9 @@
                     class="m-3"
                   >
                     <!-- show Avaliable Slot -->
-                    
-                      <b-card-text class="floor-num">{{arrAvali[key]}}</b-card-text>
-                      
+
+                    <b-card-text class="floor-num">{{arrAvali[key]}}</b-card-text>
+
                     <b-card-text class="floor-num">/{{ value[1] }}</b-card-text>
                   </b-card>
                 </li>
@@ -101,7 +101,7 @@
 
             <!-- <button @click="getZoneWithSlot()">count</button> -->
 
-            <button class="btn btn-danger btn-lg" @click="resetDB('floors')">Reset DB</button>
+            <!-- <button class="btn btn-danger btn-lg" @click="resetDB('floors')">Reset DB</button> -->
           </div>
           <!-- <div>
             <router-link
@@ -241,8 +241,10 @@ export default {
                     .collection("slotDetail")
                     .get()
                     .then(dataSlot => {
-                      // console.log("floor>>>",docFloor.id,"zone>>>",dataZone.size,"slot>>>>>>>>>>>",dataSlot.size);
-                      this.countTotal += dataSlot.size;
+                      //console.log("slot>>>>>>>>>>>",dataSlot.size);
+                     
+                      
+                       this.countTotal += dataSlot.size;
                       // console.log("counttotall>>", this.countTotal);
                       if (!this.map.has(docFloor.id)) {
                         this.map.set(docFloor.id, dataSlot.size);
